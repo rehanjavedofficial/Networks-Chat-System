@@ -51,25 +51,23 @@ class Client(threading.Thread):
         print(host)
         self.connect(host,port)
         print ("Connected\n")
-        receive=self.sock
-        time.sleep(1)
         srv=Server()
-        srv.initialise(receive)
         srv.daemon=True
         print ("Starting service")
         srv.start()
         while 1:            
-            #print "Waiting for message\n"
+        
             msg=input('>>')
             if msg=='exit':
                 break
             if msg=='':
                 continue
-            #print "Sending\n"
+           
             self.client(host,port,msg)
         return(1)
 
 myserver = Server()
+myclient = Client()
 myserver.start()
 
 while(True):
@@ -83,10 +81,10 @@ while(True):
 	if ch == 1:
 		peer_ip = input("IP>")
 		peer_port = input("PORT>")
-		connections.append((peer_ip, int(peer_port)))
+		connections.append((peer_ip, int(peer)))
 
 	if ch == 2:
-		for i, connection in enumerate(connections): print(str(i+1)+" - "+str(connection))
+		for i, connection in enumerate(connections): print(str(i+1))
 		try:
 			talkto = input("Choice >")
 			msg = input("Message >")
