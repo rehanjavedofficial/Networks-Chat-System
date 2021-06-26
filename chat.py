@@ -1,6 +1,7 @@
 import socket, random, threading, sys
 
 host = "localhost"
+
 port = random.randint(4000,5000)
 
 class Server(threading.Thread):
@@ -20,7 +21,7 @@ class Server(threading.Thread):
 			conn, addr = self.serverSocket.accept()
 			print('Connected by {0}'.format(addr))
 			threading.Thread(target=self.handleConnection, args=(conn, addr)).start()
-				
+		
 		self.serverSocket.close()
 
 	def handleConnection(self, conn, addr):
@@ -30,66 +31,56 @@ class Server(threading.Thread):
 				print("{0} Says: {1}".format(addr,data.decode("utf-8")))
 				conn.sendall(data)
 
-class Client(threading.Thread):    
-    def connect(self,host,port):
-        self.sock.connect((host,port))
-    def client(self,host,port,msg):               
-        sent=self.sock.send(msg.encode('utf-8'))           
-        #print "Sent\n"
+class Client(threading.Thread):
+	def __init__(self):
+			threading.Thread.__init__(self)
+			
+			self.host = "localhost"
+			self.port = random.randint(2000,3000)       
+
     def run(self):
-        self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        try:
-            host= input("Enter the hostname\n>>")            
-            port=int(input("Enter the port\n>>"))
-        except EOFError:
-            print("Error")
-            return 1
-        
-        print ("Connecting\n")
-        s=''
-        print(host)
-        self.connect(host,port)
-        print ("Connected\n")
-        srv=Server()
-        srv.daemon=True
-        print ("Starting service")
-        srv.start()
-        while 1:            
-        
-            msg=input('>>')
-            if msg=='exit':
-                break
-            if msg=='':
-                continue
-           
-            self.client(host,port,msg)
-        return(1)
+    		msg = input("Message >")
+			clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			clientSocket.connect(connections)
+			clientSocket.sendall(bytes(msg, "utf-8"))
+			while True:
+			conn, addr = self.serverSocket.accept()
+			print('Connected to {0}'.format(addr))
+			threading.Thread(target=self.handleConnection, args=(conn, addr)).start()
+
+		except (IndexError, ValueError):
+			print("Input Error")
+
+
+        self.clientSocket.close()
+
 
 myserver = Server()
-myclient = Client()
+
 myserver.start()
 
+connections = []
+
 while(True):
-	print("1) Add connection")
-	print("2) List connections")
+	print("1) Add client")
+	print("2) List of clients connected to the server")
 	
 	try:
 		ch = int(input("Choice >"))
 	except ValueError: continue
 
 	if ch == 1:
-		peer_ip = input("IP>")
-		peer_port = input("PORT>")
-		connections.append((peer_ip, int(peer)))
+		client_ip = input("IP>")
+		client_port = input("PORT>")
+		connections.append((client_ip, int(client)))
 
 	if ch == 2:
 		for i, connection in enumerate(connections): print(str(i+1))
 		try:
 			talkto = input("Choice >")
-			msg = input("Message >")
-			clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			clientSocket.connect(connections[int(talkto)-1])
-			clientSocket.sendall(bytes(msg, "utf-8"))			
+			myclient = Client()
+			myclient.start()
+
+		
 		except (IndexError, ValueError):
 			print("Input Error")
